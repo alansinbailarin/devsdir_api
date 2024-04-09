@@ -9,15 +9,27 @@ class DirectoryController extends Controller
 {
     public function getDevelopers(Request $request, $userId)
     {
-        $devs = User::where('user_type_id', 1);
-        $authUser = User::find($userId);
+        // Verificar si se pasó un ID de usuario válido
+        if ($userId) {
+            // Si se pasó un ID de usuario, crear una consulta para obtener todos los desarrolladores
+            $devs = User::where('user_type_id', 1);
 
-        if ($authUser) {
-            $devs = $devs->where('id', '!=', $authUser->id);
+            // Obtener el usuario autenticado
+            $authUser = User::find($userId);
+
+            // Si hay un usuario autenticado, exclúyelo de la lista de desarrolladores
+            if ($authUser) {
+                $devs = $devs->where('id', '!=', $authUser->id);
+            }
+
+            // Obtener la lista de desarrolladores
+            $devs = $devs->get();
+        } else {
+            // Si no se pasó un ID de usuario, obtener todos los desarrolladores
+            $devs = User::where('user_type_id', 1)->get();
         }
 
-        $devs = $devs->get();
-
+        // Verificar si se encontraron desarrolladores
         if ($devs->isEmpty()) {
             return response()->json([
                 'success' => false,
@@ -25,11 +37,13 @@ class DirectoryController extends Controller
             ], 404);
         }
 
+        // Devolver la lista de desarrolladores
         return response()->json([
             'success' => true,
             'data' => $devs
         ]);
     }
+
 
     public function getDeveloperInformation(Request $request, $userId)
     {

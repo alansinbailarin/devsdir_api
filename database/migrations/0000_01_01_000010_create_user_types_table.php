@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        /** Developer, Recruiter */
         Schema::create('user_types', function (Blueprint $table) {
             $table->id();
 
