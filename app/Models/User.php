@@ -27,6 +27,9 @@ class User extends Authenticatable
         'password',
         'user_status_id',
         'user_type_id',
+        'job_type_id',
+        'skill_level_id',
+        'experience_id'
     ];
 
     /**
@@ -65,5 +68,25 @@ class User extends Authenticatable
     public function userType()
     {
         return $this->belongsTo(UserType::class);
+    }
+
+    public function userSalary()
+    {
+        return $this->hasOne(UserSalary::class);
+    }
+
+    public function jobType()
+    {
+        return $this->belongsTo(JobType::class);
+    }
+
+    public function skillLevel()
+    {
+        return $this->belongsTo(SkillLevel::class);
+    }
+
+    public function experience()
+    {
+        return $this->belongsTo(Experience::class);
     }
 }

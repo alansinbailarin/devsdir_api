@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DirectoryController;
+use App\Http\Controllers\JobTypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,10 @@ Route::get('company/companies', [CompanyController::class, 'getCompanies']);
 
 // Status
 Route::get('status/{statusId}', [UserStatusController::class, 'getStatusById']);
+
+// Job types
+Route::get('job-types', [JobTypeController::class, 'getJobTypes']);
+Route::get('job-type/{jobTypeId}', [JobTypeController::class, 'getJobType']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('auth/logout', [AuthController::class, 'logout']);

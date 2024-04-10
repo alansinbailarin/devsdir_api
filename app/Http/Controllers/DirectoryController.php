@@ -10,7 +10,11 @@ class DirectoryController extends Controller
     public function getDevelopers(Request $request, $userId)
     {
         if ($userId) {
-            $devs = User::where('user_type_id', 1);
+            $devs = User::where('user_type_id', 1)
+                ->with('userSalary')
+                ->with('jobType')
+                ->with('skillLevel')
+                ->with('experience');
 
             $authUser = User::find($userId);
 
@@ -20,7 +24,12 @@ class DirectoryController extends Controller
 
             $devs = $devs->latest()->get();
         } else {
-            $devs = User::where('user_type_id', 1)->latest()->get();
+            $devs = User::where('user_type_id', 1)
+                ->with('userSalary')
+                ->with('jobType')
+                ->with('skillLevel')
+                ->with('experience')
+                ->latest()->get();
         }
 
         if ($devs->isEmpty()) {
@@ -40,6 +49,10 @@ class DirectoryController extends Controller
     {
         $dev = User::where('uuid', $uuid)
             ->with('userInformation')
+            ->with('userSalary')
+            ->with('jobType')
+            ->with('skillLevel')
+            ->with('experience')
             ->first();
 
         if (!$dev) {

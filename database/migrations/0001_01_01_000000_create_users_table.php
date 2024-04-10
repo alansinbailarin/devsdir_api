@@ -28,6 +28,17 @@ return new class extends Migration
             $table->foreignId('user_type_id')->nullable();
             $table->foreign('user_type_id')->references('id')->on('user_types');
 
+            $table->foreignId('job_type_id')->nullable();
+            $table->foreign('job_type_id')->references('id')->on('job_types');
+
+            $table->foreignId('skill_level_id')->nullable();
+            $table->foreign('skill_level_id')->references('id')->on('skill_levels');
+
+            $table->foreignId('experience_id')->nullable();
+            $table->foreign('experience_id')->references('id')->on('experiences');
+
+            // add company later
+
             $table->rememberToken();
             $table->timestamps();
         });
