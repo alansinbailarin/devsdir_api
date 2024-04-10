@@ -9,27 +9,20 @@ class DirectoryController extends Controller
 {
     public function getDevelopers(Request $request, $userId)
     {
-        // Verificar si se pasó un ID de usuario válido
         if ($userId) {
-            // Si se pasó un ID de usuario, crear una consulta para obtener todos los desarrolladores
             $devs = User::where('user_type_id', 1);
 
-            // Obtener el usuario autenticado
             $authUser = User::find($userId);
 
-            // Si hay un usuario autenticado, exclúyelo de la lista de desarrolladores
             if ($authUser) {
                 $devs = $devs->where('id', '!=', $authUser->id);
             }
 
-            // Obtener la lista de desarrolladores
-            $devs = $devs->get();
+            $devs = $devs->latest()->get();
         } else {
-            // Si no se pasó un ID de usuario, obtener todos los desarrolladores
-            $devs = User::where('user_type_id', 1)->get();
+            $devs = User::where('user_type_id', 1)->latest()->get();
         }
 
-        // Verificar si se encontraron desarrolladores
         if ($devs->isEmpty()) {
             return response()->json([
                 'success' => false,
@@ -37,13 +30,30 @@ class DirectoryController extends Controller
             ], 404);
         }
 
-        // Devolver la lista de desarrolladores
         return response()->json([
             'success' => true,
             'data' => $devs
         ]);
     }
 
+    public function getDeveloper(Request $request, $uuid)
+    {
+        $dev = User::where('uuid', $uuid)
+            ->with('userInformation')
+            ->first();
+
+        if (!$dev) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Developer not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $dev
+        ]);
+    }
 
     public function getDeveloperInformation(Request $request, $userId)
     {

@@ -15,6 +15,7 @@ Route::post('auth/register', [AuthController::class, 'register'])->name('registe
 Route::post('auth/login', [AuthController::class, 'login'])->name('login');
 
 // Directory
+Route::get('directory/developer/info/{uuid}', [DirectoryController::class, 'getDeveloper']);
 Route::get('directory/developers/{userId}', [DirectoryController::class, 'getDevelopers']);
 Route::get('directory/developer/{userId}', [DirectoryController::class, 'getDeveloperInformation']);
 Route::get('directory/last-twenty-developers', [DirectoryController::class, 'getLastTwentyDevelopers']);
