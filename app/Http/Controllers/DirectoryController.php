@@ -9,28 +9,41 @@ class DirectoryController extends Controller
 {
     public function getDevelopers(Request $request, $userId)
     {
-        if ($userId) {
-            $devs = User::where('user_type_id', 1)
-                ->with('userSalary')
-                ->with('jobType')
-                ->with('skillLevel')
-                ->with('experience');
+        $devs = User::where('user_type_id', 1)
+            ->with('userInformation')
+            ->with('userSalary')
+            ->with('jobType')
+            ->with('skillLevel')
+            ->with('experience');
 
+        if ($userId) {
             $authUser = User::find($userId);
 
             if ($authUser) {
-                $devs = $devs->where('id', '!=', $authUser->id);
+                $devs->where('id', '!=', $authUser->id);
             }
-
-            $devs = $devs->latest()->get();
-        } else {
-            $devs = User::where('user_type_id', 1)
-                ->with('userSalary')
-                ->with('jobType')
-                ->with('skillLevel')
-                ->with('experience')
-                ->latest()->get();
         }
+
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $devs->where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('surname', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('userInformation', function ($subquery) use ($searchTerm) {
+                        $subquery->where('title', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $searchTerm . '%']);
+            });
+        }
+
+        if ($request->has('availability')) {
+            $availability = $request->input('availability');
+            if ($availability !== '') {
+                $devs->where('user_status_id', $availability);
+            }
+        }
+
+        $devs = $devs->latest()->get();
 
         if ($devs->isEmpty()) {
             return response()->json([
@@ -44,6 +57,7 @@ class DirectoryController extends Controller
             'data' => $devs
         ]);
     }
+
 
     public function getDeveloper(Request $request, $uuid)
     {

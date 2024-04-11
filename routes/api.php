@@ -25,6 +25,7 @@ Route::get('directory/last-twenty-developers', [DirectoryController::class, 'get
 Route::get('company/companies', [CompanyController::class, 'getCompanies']);
 
 // Status
+Route::get('statuses/all', [UserStatusController::class, 'getStatuses']);
 Route::get('status/{statusId}', [UserStatusController::class, 'getStatusById']);
 
 // Job types
