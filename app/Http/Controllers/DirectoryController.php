@@ -43,7 +43,20 @@ class DirectoryController extends Controller
             }
         }
 
-        $devs = $devs->latest()->get();
+        if ($request->has('order')) {
+            $order = $request->input('order');
+            if ($order === 'asc') {
+                $devs = $devs->orderBy('created_at', 'asc');
+            } elseif ($order === 'desc') {
+                $devs = $devs->orderBy('created_at', 'desc');
+            } elseif ($order === 'random') {
+                $devs = $devs->inRandomOrder();
+            }
+        } else {
+            $devs = $devs->latest();
+        }
+
+        $devs = $devs->paginate(10);
 
         if ($devs->isEmpty()) {
             return response()->json([
@@ -57,7 +70,6 @@ class DirectoryController extends Controller
             'data' => $devs
         ]);
     }
-
 
     public function getDeveloper(Request $request, $uuid)
     {
